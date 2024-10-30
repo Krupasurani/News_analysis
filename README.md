@@ -84,7 +84,7 @@ Copy code
 python app.py
 Open your browser and go to http://127.0.0.1:5000 to access the application.
 
-Usage
+## Usage
 Search Articles: Enter your search query and select the date range using the provided input fields.
 View Results: Click the "Search" button to fetch news articles. The results will include summaries, key points, sentiment analysis, and topics.
 Next Batch: Use the "Next Batch" button to fetch additional articles if available.
@@ -93,7 +93,7 @@ The code consists of several key components that work together to fetch, process
 
 Imports
 The necessary libraries are imported at the beginning of the app.py file:
-
+## Code Explanation
 python
 Copy code
 from flask import Flask, render_template, request, session
