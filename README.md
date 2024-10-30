@@ -1,96 +1,98 @@
 # News Analysis Application
 
-## Overview
+This project is a Flask web application that integrates with the News API and OpenAI's GPT-4 model to fetch, process, and analyze news articles. Users can search for news articles based on a query and date range, and the application will summarize the articles, extract key points, analyze sentiment, and classify their topics.
 
-The **News Analysis Application** is a Flask web app that allows users to search for news articles based on specific queries and date ranges. The application integrates with the News API to fetch articles and utilizes OpenAI's GPT-4 model for advanced processing, including summarization, key point extraction, sentiment analysis, and topic classification.
+## Table of Contents
+
+- [Features](#features)
+- [Technologies Used](#technologies-used)
+- [Setup](#setup)
+- [Usage](#usage)
+- [Code Explanation](#code-explanation)
+- [License](#license)
 
 ## Features
 
-- **Search Functionality**: Search for news articles by keyword and date range.
-- **Article Summarization**: Summarize articles using the GPT-4 model.
-- **Key Point Extraction**: Extract main points from articles.
-- **Sentiment Analysis**: Determine the sentiment of articles (positive, neutral, negative).
-- **Topic Classification**: Classify articles into various topics.
-- **Pagination Support**: Navigate through multiple batches of articles.
+- **Search Articles**: Users can search for news articles by keyword and specify a date range.
+- **Article Summarization**: The application summarizes the content of the articles using OpenAI's GPT-4 model.
+- **Key Points Extraction**: Key points from each article are extracted for quick understanding.
+- **Sentiment Analysis**: The sentiment of each article is classified as positive, neutral, or negative.
+- **Topic Classification**: Articles are categorized into relevant topics based on their content.
+- **Pagination**: Users can view multiple batches of articles, making it easier to browse large datasets.
 
 ## Technologies Used
 
-- **Programming Language**: Python
-- **Web Framework**: Flask
-- **APIs**:
-  - OpenAI API for natural language processing.
-  - NewsAPI for fetching news articles.
-- **Front-End Technologies**: HTML, CSS
+- **Python**: The main programming language used for developing the application.
+- **Flask**: A lightweight web framework for building web applications in Python.
+- **OpenAI API**: Used for generating summaries and performing analysis on the article content.
+- **NewsAPI**: A service that provides access to news articles from various sources.
+- **HTML/CSS**: For front-end rendering of the application.
 
-## Setup Instructions
-
-Follow these steps to set up and run the application on your local machine.
+## Setup
 
 ### Prerequisites
 
-- Python 3.x installed on your machine.
-- Basic knowledge of Python and web development.
+Make sure you have Python 3.6 or later installed on your machine. You can download it from [python.org](https://www.python.org/downloads/).
 
-### Step 1: Clone the Repository
+### Clone the Repository
 
-Open your terminal and run the following command:
+1. Clone this repository:
 
-```bash
-git clone https://github.com/yourusername/news-analysis-app.git
+   ```bash
+   git clone https://github.com/yourusername/news-analysis-app.git
 
-
-Replace yourusername with your actual GitHub username.
-
-Step 2: Navigate to the Project Directory
-Change your current working directory to the project folder:
+Navigate to the project directory:
 
 bash
 Copy code
 cd news-analysis-app
-Step 3: Install Required Packages
-Install the required Python packages using pip:
+Install Required Packages
+It is recommended to create a virtual environment to manage dependencies. You can create one using the following commands:
+
+bash
+Copy code
+python -m venv venv
+Then, activate the virtual environment:
+
+On Windows:
+
+bash
+Copy code
+venv\Scripts\activate
+On macOS/Linux:
+
+bash
+Copy code
+source venv/bin/activate
+Install the required packages:
 
 bash
 Copy code
 pip install Flask requests openai newsapi-python
-Step 4: Set Up API Keys
-OpenAI API Key: Sign up at OpenAI and generate an API key.
-
-News API Key: Sign up at News API to obtain your API key.
-
-Open the main application file (e.g., app.py) and replace the placeholders with your actual API keys:
+Set Up API Keys
+In the app.py file, set your API keys:
 
 python
 Copy code
-openai.api_key = "your_openai_api_key"
-NEWS_API_KEY = "your_news_api_key"
-Step 5: Run the Application
-Start the Flask application by running:
+openai.api_key = "your_openai_api_key"  # Replace with your OpenAI API key
+NEWS_API_KEY = "your_news_api_key"  # Replace with your News API key
+Run the Application
+Run the application using the following command:
 
 bash
 Copy code
 python app.py
-Step 6: Access the Application
-Open your web browser and go to http://127.0.0.1:5000 to access the application.
+Open your browser and go to http://127.0.0.1:5000 to access the application.
 
-Usage Instructions
-Search for Articles:
-
-Enter your search query in the designated input field.
-Specify the date range using the "from" and "to" date pickers.
-Click the "Search" button.
-View Results:
-
-The application will display a list of articles matching your criteria.
-Each article will include its title, publication date, summarized content, key points, sentiment analysis, topic classification, and a link to the original source.
-Pagination:
-
-If there are more articles available, click the "Next Batch" button to fetch and view additional articles.
+Usage
+Search Articles: Enter your search query and select the date range using the provided input fields.
+View Results: Click the "Search" button to fetch news articles. The results will include summaries, key points, sentiment analysis, and topics.
+Next Batch: Use the "Next Batch" button to fetch additional articles if available.
 Code Explanation
-The application consists of the following components:
+The code consists of several key components that work together to fetch, process, and analyze news articles.
 
-1. Imports
-Essential libraries and modules are imported to handle various functionalities:
+Imports
+The necessary libraries are imported at the beginning of the app.py file:
 
 python
 Copy code
@@ -101,80 +103,173 @@ import openai
 import re
 from typing import List, Dict
 from newsapi import NewsApiClient
-2. API Key Configuration
-API keys are set up to authenticate requests to the OpenAI and News API services:
+API Key Setup
+API keys for OpenAI and News API are defined for authentication:
 
 python
 Copy code
-openai.api_key = "your_openai_api_key"  # Replace with your actual key
-NEWS_API_KEY = "your_news_api_key"  # Replace with your actual key
-3. Initialize News API Client and Flask App
-The News API client is initialized, and the Flask application is created:
+openai.api_key = "your_openai_api_key"
+NEWS_API_KEY = "your_news_api_key"
+Flask App Initialization
+A Flask application is initialized, and a secret key is set for session management:
 
 python
 Copy code
-newsapi = NewsApiClient(api_key=NEWS_API_KEY)
 app = Flask(__name__)
-app.secret_key = 'your_secret_key'  # Required for session management
-4. Constants
-Define constants for batch size, which determines how many articles to fetch at a time:
+app.secret_key = 'your_secret_key'
+Constants
+Constants such as BATCH_SIZE define how many articles are fetched in each request:
 
 python
 Copy code
 BATCH_SIZE = 5  # Number of articles to fetch each time
-5. Data Collection
-Fetching Articles: The fetch_news_articles function retrieves articles from the News API based on user-defined parameters:
+Data Collection
+The fetch_news_articles function retrieves news articles based on the user's query and date range. It handles pagination by using the page parameter:
 
 python
 Copy code
 def fetch_news_articles(query: str, from_date: str, to_date: str, page: int) -> List[Dict]:
-    # Implementation to fetch articles from News API
-6. Article Processing
-Text Cleaning: The clean_text function removes HTML tags and special characters from article content:
+    try:
+        all_articles = newsapi.get_everything(
+            q=query,
+            from_param=from_date,
+            to=to_date,
+            sort_by='publishedAt',
+            language='en',
+            page_size=BATCH_SIZE,
+            page=page
+        )
+        articles = all_articles.get('articles', [])
+        return [
+            {
+                "title": article["title"],
+                "date": article["publishedAt"],
+                "content": article["content"],
+                "source": article["source"]["name"],
+                "url": article["url"]
+            }
+            for article in articles if article.get("content")
+        ]
+    except Exception as e:
+        print(f"Error fetching news articles: {e}")
+        return []
+Article Processing
+The clean_text function removes HTML tags and special characters from the article content:
 
 python
 Copy code
 def clean_text(text: str) -> str:
-    # Implementation to clean article content
-Preprocessing Articles: The preprocess_articles function processes each article for further analysis:
+    text = re.sub(r"<[^>]+>", "", text)  # Remove HTML tags
+    text = re.sub(r"[^a-zA-Z0-9\s]", "", text)  # Remove special characters
+    text = re.sub(r"\s+", " ", text).strip()  # Clean whitespace
+    return text
+The preprocess_articles function processes each article and cleans the content:
 
 python
 Copy code
 def preprocess_articles(articles: List[Dict]) -> List[Dict]:
-    # Implementation to preprocess articles
-7. LLM Integration
-This section contains functions that interact with the OpenAI API to perform various analyses on the articles:
+    processed_articles = []
+    for article in articles:
+        cleaned_content = clean_text(article["content"]) if article["content"] else ""
+        processed_articles.append({
+            "title": article["title"],
+            "date": article["date"],
+            "content": cleaned_content,
+            "source": article["source"],
+            "url": article["url"]
+        })
+    return processed_articles
+LLM Integration
+The get_llm_analysis function interacts with the OpenAI API to perform various analyses on the article content:
 
-Summarization: The summarize_article function generates a summary for the article content.
-Key Points Extraction: The extract_key_points function extracts key points from the article.
-Sentiment Analysis: The sentiment_analysis function determines the sentiment of the article.
-Topic Classification: The classify_topic function classifies the article's topic.
-Each of these functions utilizes the get_llm_analysis helper function to communicate with the GPT-4 model.
+python
+Copy code
+def get_llm_analysis(article_content: str, prompt_template: str) -> str:
+    prompt = prompt_template.format(article_content=article_content)
+    messages = [{"role": "user", "content": prompt}]
+    
+    try:
+        response = openai.ChatCompletion.create(
+            model="gpt-4",
+            messages=messages,
+            max_tokens=150,
+            temperature=0.2,
+            top_p=1,
+            frequency_penalty=0,
+            presence_penalty=0
+        )
+        return response.choices[0].message['content'].strip()
+    except Exception as e:
+        print(f"Error processing with LLM: {e}")
+        return "Analysis could not be generated."
+Specific Analysis Functions
+Functions for specific analyses call get_llm_analysis with tailored prompts:
 
-8. Flask Routes
-Main Route: The main route (/) handles GET and POST requests for searching articles:
+python
+Copy code
+def summarize_article(article_content: str) -> str:
+    prompt_template = "Please summarize the following article: {article_content}"
+    return get_llm_analysis(article_content, prompt_template)
+
+def extract_key_points(article_content: str) -> str:
+    prompt_template = "Extract key points from the following article: {article_content}"
+    return get_llm_analysis(article_content, prompt_template)
+
+def sentiment_analysis(article_content: str) -> str:
+    prompt_template = "What is the sentiment of the following article? (positive, neutral, negative): {article_content}"
+    return get_llm_analysis(article_content, prompt_template)
+
+def classify_topic(article_content: str) -> str:
+    prompt_template = "Classify the topic of the following article: {article_content}"
+    return get_llm_analysis(article_content, prompt_template)
+Flask Routes
+The main routes handle requests from users. The index route processes searches and displays results:
 
 python
 Copy code
 @app.route('/', methods=['GET', 'POST'])
 def index():
-    # Implementation to handle user requests and display results
-Next Batch Route: The /next_batch route fetches additional articles if available:
+    if request.method == 'POST':
+        search_query = request.form['search_query']
+        from_date = request.form['from_date']
+        to_date = request.form['to_date']
+        
+        if search_query and from_date and to_date:
+            session['current_page'] = 1
+            session['search_query'] = search_query
+            session['from_date'] = from_date
+            session['to_date'] = to_date
+            
+            articles = fetch_news_articles(search_query, from_date, to_date, session['current_page'])
+            if not articles:
+                return render_template('index.html', message="No articles found.")
 
-python
-Copy code
+            processed_articles = preprocess_articles(articles)
+            session['results'] = process_batch(processed_articles)
+            session['has_next_batch'] = len(articles) == BATCH_SIZE
+
+            return render_template('index.html', results=session['results'], has_next_batch=session['has_next_batch'])
+
+    results = session.get('results', [])
+    has_next_batch = session.get('has_next_batch', False)
+    return render_template('index.html', results=results, has_next_batch=has_next_batch)
+
 @app.route('/next_batch', methods=['POST'])
 def next_batch():
-    # Implementation to fetch next batch of articles
-9. Batch Processing
-The process_batch function consolidates all the analyses for each article and prepares the results for rendering:
-
-python
-Copy code
-def process_batch(processed_articles) -> List[Dict]:
-    # Implementation to process each article and generate results
-10. Running the Application
-Finally, the application runs in debug mode, enabling easy troubleshooting during development:
+    current_page = session.get('current_page', 1) + 1
+    session['current_page'] = current_page
+    
+    articles = fetch_news_articles(session['search_query'], session['from_date'], session['to_date'], current_page)
+    if not articles:
+        return {'success': False, 'message': 'No more articles available.'}
+    
+    processed_articles = preprocess_articles(articles)
+    session['results'].extend(process_batch(processed_articles))
+    session['has_next_batch'] = len(articles) == BATCH_SIZE
+    
+    return {'success': True, 'results': session['results'], 'has_next_batch': session['has_next_batch']}
+Running the Application
+Finally, the application runs if executed directly:
 
 python
 Copy code
@@ -182,18 +277,3 @@ if __name__ == "__main__":
     app.run(debug=True)
 License
 This project is licensed under the MIT License. See the LICENSE file for details.
-
-Contributing
-Contributions are welcome! If you'd like to contribute to the project, please fork the repository and submit a pull request.
-
-Acknowledgments
-Flask - A micro web framework for Python.
-OpenAI - API for advanced language models.
-News API - A simple HTTP REST API for searching and retrieving news articles.
-vbnet
-Copy code
-
-### Instructions for Use
-- Replace `yourusername` in the clone URL with your actual GitHub username.
-- Ensure any additional sections (like License) reflect your actual project's structure and files.
-- Feel free to modify the language or content as needed to better suit your st
